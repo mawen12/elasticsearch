@@ -20,17 +20,18 @@ import org.elasticsearch.core.SuppressForbidden;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
+import java.util.List;
 
 /**
- * Arguments for running Elasticsearch.
+ * 用于运行Elasticsearch的参数
  *
- * @param daemonize {@code true} if Elasticsearch should run as a daemon process, or {@code false} otherwise
- * @param quiet {@code false} if Elasticsearch should print log output to the console, {@code true} otherwise
- * @param pidFile absolute path to a file Elasticsearch should write its process id to, or {@code null} if no pid file should be written
- * @param secrets the provided secure settings implementation
- * @param nodeSettings the node settings read from {@code elasticsearch.yml}, the cli and the process environment
- * @param configDir the directory where {@code elasticsearch.yml} and other config exists
- * @param logsDir the directory where log files should be written
+ * @param daemonize Elasticsearch是否以守护线程运行，如果不以守护线程运行，则为{@code true}
+ * @param quiet Elasticsearch是否应该输出日志到控制台，如果不输出，则为{@code false}
+ * @param pidFile Elasticsearch应该将其进程ID写入的文件的绝对路径，如果不应该写入pid文件，则为{@code null}
+ * @param secrets 提供的安全设置实现
+ * @param nodeSettings 从{@code elasticsearch.yml}、cli和进程环境中读取的节点设置
+ * @param configDir {@code elasticsearch.yml}和其他配置所在的目录
+ * @param logsDir 日志文件应写入的目录
  */
 public record ServerArgs(
     boolean daemonize,
@@ -72,6 +73,18 @@ public record ServerArgs(
         );
     }
 
+    public ServerArgs() throws IOException {
+        this(
+            false,
+            true,
+            resolvePath("/Users/mawen/Documents/develop/elasticsearch/elasticsearch.pid"),
+            null,
+            Settings.readSettingsDefault(),
+            resolvePath("/Users/mawen/Documents/develop/elasticsearch/config"),
+            resolvePath("/Users/mawen/Documents/develop/elasticsearch/logs")
+        );
+    }
+
     private static Path readPidFile(StreamInput in) throws IOException {
         String pidFile = in.readOptionalString();
         return pidFile == null ? null : resolvePath(pidFile);
@@ -102,5 +115,9 @@ public record ServerArgs(
             | InvocationTargetException cfe) {
             throw new IllegalArgumentException("Invalid secrets implementation [" + className + "]", cfe);
         }
+    }
+
+    public static Settings emptySettings() throws IOException {
+        return Settings.EMPTY;
     }
 }

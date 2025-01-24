@@ -123,7 +123,9 @@ class Elasticsearch {
 
             // note that reading server args does *not* close System.in, as it will be read from later for shutdown notification
             var in = new InputStreamStreamInput(System.in);
-            args = new ServerArgs(in);
+//            args = new ServerArgs(in);
+            // 为了调试使用
+            args = new ServerArgs();
 
             // mostly just paths are used in phase 1, so secure settings are not needed
             Environment nodeEnv = new Environment(args.nodeSettings(), args.configDir());

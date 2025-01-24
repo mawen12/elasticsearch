@@ -615,6 +615,18 @@ public final class Settings implements ToXContentFragment, Writeable, Diffable<S
         return builder.build();
     }
 
+    public static Settings readSettingsDefault() throws IOException {
+        Builder builder = new Builder();
+
+        // set path.home
+        builder.put("path.home", "/Users/mawen/Documents/develop/elasticsearch");
+        builder.put("path.data", "/Users/mawen/Documents/develop/elasticsearch/data");
+        builder.put("path.logs", "/Users/mawen/Documents/develop/elasticsearch/logs");
+
+        return builder.build();
+    }
+
+
     private static final DiffableUtils.ValueSerializer<String, Object> DIFF_VALUE_SERIALIZER =
         new DiffableUtils.NonDiffableValueSerializer<>() {
             @Override
